@@ -9,7 +9,7 @@ module elevator_controller(
        over_weight, //It indicates the limit of the weight in the elevator
        weight_alert, //'1' represents the elevator is overload
        door_alert, //'1' represents waiting time is longer than over_time
-       out_current_floor //It is a variable that will be used in the shift register
+       out_current_floor //It is a variable that will be used in the shift register and it shows the current floor elevator is present
        );
 
 //input pins
@@ -27,10 +27,7 @@ reg r_door_alert; // It is connected to the output door_alert
 reg r_weight_alert; // It is connected to the output weight_alert
 reg [7:0] r_out_current_floor;  // It is connected to the output out_current_floor
 
-//clock generator register
-reg [12:0] clk_count;
-reg clk_200; //200 Hz clock
-reg clk_trigger; //trigger of generator clock
+reg clk_trigger; //used to enable movement
 
 //match pins and registers
 assign direction = r_direction;
@@ -42,39 +39,20 @@ assign out_current_floor = r_out_current_floor;
 //initialization
 always @ (negedge reset) 
 begin
-    clk_200 = 1'b0;
-    clk_count = 0;
     clk_trigger = 1'b0;
-
-    //reset the clock registers
+    
     r_complete = 1'b0;   
     r_door_alert = 1'b0;
     r_weight_alert = 1'b0;
 end
 
-// clock generator block
-always @ (posedge clk) 
-begin
-    if (clk_trigger)
-    begin
-        clk_count = clk_count + 1;
-    end
-
-    if (clk_count == 5000) 
-    begin
-        clk_200 = ~clk_200;
-        clk_count = 0;
-    end
-end
-
 // in the case if there is a request floor
 always @ (request_floor) //It will run only when it receives request
 begin 
-    // trigger the clock generator
+    // trigger the clock
     clk_trigger = 1;
-    clk_200 = ~clk_200;
-
-    r_out_current_floor <= in_current_floor; // r_out_current_floor will be keep updating whenever it reach the next floor, while the in_current_floor stay at the initial floor 
+    // r_out_current_floor will be keep updating whenever it reach the next floor, while the in_current_floor stay at the initial floor 
+    r_out_current_floor <= in_current_floor; 
 end
 
 always @ (posedge clk) 
@@ -82,16 +60,19 @@ begin
     // case 1: the normal running case of the elevator
     if (!reset && !over_time && !over_weight) 
     begin
-        if (request_floor > r_out_current_floor) 
+        // If the request_floor is greater than r_out_current_floor the elevator will move up
+        if (request_floor > r_out_current_floor)  
         begin
             r_direction = 1'b1;
             r_out_current_floor <= r_out_current_floor << 1;
         end
+        // If the request_floor is smaller than r_out_current_floor the elevator will move down
         else if (request_floor < r_out_current_floor) 
         begin
             r_direction = 1'b0;
             r_out_current_floor = r_out_current_floor >> 1;
         end
+        // If the request_floor is equal to r_out_current_floor ,i.e., it reach the request floor, and the r_complete is on and elevator stop moving
         else if (request_floor == r_out_current_floor) 
         begin
             r_complete = 1;
@@ -103,11 +84,12 @@ begin
     else if (!reset && over_time) 
     begin
         r_door_alert = 1;
-        r_complete = 1;
         r_weight_alert = 0;
+        r_complete = 1;
         r_direction = 0;
         r_out_current_floor <= r_out_current_floor;
-    end
+    end 
+    // the door alert ring and the elevator will stop moving when it is over time
 
     //case 3: the total weight in the elevator is more than 4500 lbs
     else if (!reset && over_weight) 
@@ -118,6 +100,7 @@ begin
         r_direction = 0;
         r_out_current_floor <= r_out_current_floor;
     end
+    // the weight alert ring and the elevator will stop moving when it is over load
 end
 
 endmodule
