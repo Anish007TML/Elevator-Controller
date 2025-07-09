@@ -80,7 +80,7 @@ begin
         end
     end
     
-    //case 2: the door keep open for more than 3 minutes
+    //case 2: the door keep open for required amount of time and over_time goes high if sensor connected to it checks it is over time
     else if (!reset && over_time) 
     begin
         r_door_alert = 1;
@@ -91,7 +91,7 @@ begin
     end 
     // the door alert ring and the elevator will stop moving when it is over time
 
-    //case 3: the total weight in the elevator is more than 4500 lbs
+    //case 3: the total weight in the elevator goes higher than the required and over_weight goes high if sensor connected to it checks overload 
     else if (!reset && over_weight) 
     begin
         r_door_alert = 0;
