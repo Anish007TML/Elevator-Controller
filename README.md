@@ -38,7 +38,7 @@ The test cases are :-
 |     7     | Idle - new request                 |
 |     8     | Reset during movement              |
 |     9     | Same floor request                 |
-|     10    | Boundary test (ground to top floor)|
+|     10    | Boundary case (ground to top floor)|
 
 The testbench rigorously exercises the elevator controller across a wide range of real-world conditions to ensure functional correctness, responsiveness to abnormal events (like overweight and overtime), and proper FSM transitions. With clearly defined and reusable test cases, it provides a solid foundation for verifying and extending the system — whether for FPGA implementation, multi-elevator coordination, or advanced scheduling logic.
 
@@ -71,7 +71,7 @@ Test Case 8 : Reset during movement
 Test Case 9 : Same floor request                 
 <img width="2318" height="1014" alt="image" src="https://github.com/user-attachments/assets/384c7bb3-a812-48c8-9982-75134aa27d1e" />
 
-Test Case 10 : Boundary test (ground to top floor)
+Test Case 10 : Boundary case (ground to top floor)
 <img width="2310" height="1005" alt="image" src="https://github.com/user-attachments/assets/b79f3216-3f15-47fe-917b-c68217491da0" />
 
 
