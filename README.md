@@ -7,7 +7,6 @@ The core parts of the design are shift register, three cases of elevator and the
 <img width="2342" height="1294" alt="image" src="https://github.com/user-attachments/assets/d934968e-70b5-4206-b38d-a8ee91298050" />
 
 ## FSM Logic Summary
-
 The controller behaves based on:
 1. **Request logic**: Moves up/down based on requested floor vs. current.
 2. **Door alert**: If door open exceeds `over_time`, it triggers an alert.
@@ -15,7 +14,6 @@ The controller behaves based on:
 4. **Complete signal**: Indicates elevator reached its requested floor.
 
 ## Design Strategy 
-
 In the coding part, we used several strategies to make the program works. 
 First, we defined the input and output current floor as in_current_floor and our_current_floor to avoid same variable name as output and input.  
 Second, we add two more input pins - over_time and over_weight in the code. These signals will be output from the sensor to the controller. When the controller receives signal from weight alert or door alert, the complete will become one so that the elevator will stay unmoved at the out_current_floor.   
@@ -25,7 +23,6 @@ Then, in_current_floor stay the same, out_current_floor keep updating and compar
 Lastly, define three cases of if statement for the elevator. There are cases for normal running cases – (comparing between request_floor and out_current_floor to decide the moving direction), overtime (turn on the door_alert) and overweight cases for elevator - (turn on the weight_alert). 
 
 ## Testbench Implementation
-
 The testbench elevator_controller_tb.v is designed to validate and simulate the behavior of the elevator_controller module using realistic elevator scenarios. It features a modular structure with a test_case task and a case-based selector that runs different test scenarios sequentially. 
 
 The test cases are :- 
@@ -41,7 +38,7 @@ The test cases are :-
 |     7     | Idle - new request                 |
 |     8     | Reset during movement              |
 |     9     | Same floor request                 |
-|     10    | Boundary test (ground → top floor) |
+|     10    | Boundary test (ground to top floor)|
 
 The testbench rigorously exercises the elevator controller across a wide range of real-world conditions to ensure functional correctness, responsiveness to abnormal events (like overweight and overtime), and proper FSM transitions. With clearly defined and reusable test cases, it provides a solid foundation for verifying and extending the system — whether for FPGA implementation, multi-elevator coordination, or advanced scheduling logic.
 
